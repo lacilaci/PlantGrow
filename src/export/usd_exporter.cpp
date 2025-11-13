@@ -2,8 +2,25 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include <filesystem>
+#include <system_error>
 
 namespace plantgrow {
+
+// Helper function to ensure parent directories exist
+static bool ensure_directory_exists(const std::string& filepath) {
+    std::filesystem::path path(filepath);
+    if (path.has_parent_path()) {
+        std::error_code ec;
+        std::filesystem::create_directories(path.parent_path(), ec);
+        if (ec) {
+            std::cerr << "Failed to prepare export directory ("
+                      << path.parent_path() << "): " << ec.message() << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
 
 bool USDExporter::export_tree(const Tree& tree, const std::string& filepath) {
     // For Phase 1, we'll export as USDA (ASCII USD)
@@ -12,6 +29,11 @@ bool USDExporter::export_tree(const Tree& tree, const std::string& filepath) {
 }
 
 bool USDExporter::export_usda_lines(const Tree& tree, const std::string& filepath) {
+    // Ensure output directory exists
+    if (!ensure_directory_exists(filepath)) {
+        return false;
+    }
+
     std::ofstream file(filepath);
     if (!file.is_open()) {
         std::cerr << "Failed to open file: " << filepath << std::endl;
@@ -75,6 +97,11 @@ bool USDExporter::export_usda_lines(const Tree& tree, const std::string& filepat
 }
 
 bool USDExporter::export_simple_format(const Tree& tree, const std::string& filepath) {
+    // Ensure output directory exists
+    if (!ensure_directory_exists(filepath)) {
+        return false;
+    }
+
     std::ofstream file(filepath);
     if (!file.is_open()) {
         std::cerr << "Failed to open file: " << filepath << std::endl;
