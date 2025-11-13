@@ -1,0 +1,37 @@
+{
+  "species": "oak",
+  "version": "1.0",
+  "metadata": {
+    "description": "Quercus robur - English Oak (Phase 1 - Basic)",
+    "author": "PlantGrow",
+    "date": "2025-11-13"
+  },
+
+  "growth_parameters": {
+    "simulation_years": 30,
+    "time_step_years": 1,
+    "random_seed": 12345
+  },
+
+  "l_system": {
+    "axiom": "F",
+    "rules": {
+      "F": "F[+F][-F]F"
+    },
+    "iterations": 5,
+    "stochastic_variation": 0.0
+  },
+
+  "branching": {
+    "base_angle_degrees": 30.0,
+    "angle_variation": 10.0,
+    "branch_probability": 0.7,
+    "min_parent_age_years": 2
+  },
+
+  "output": {
+    "usd_path": "output/oak_tree.usda",
+    "include_branches": true,
+    "include_foliage": false
+  }
+}

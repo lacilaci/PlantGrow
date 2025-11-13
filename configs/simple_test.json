@@ -1,0 +1,37 @@
+{
+  "species": "test_tree",
+  "version": "1.0",
+  "metadata": {
+    "description": "Simple test tree for Phase 1 validation",
+    "author": "PlantGrow",
+    "date": "2025-11-13"
+  },
+
+  "growth_parameters": {
+    "simulation_years": 10,
+    "time_step_years": 1,
+    "random_seed": 42
+  },
+
+  "l_system": {
+    "axiom": "F",
+    "rules": {
+      "F": "FF[+F][-F]"
+    },
+    "iterations": 4,
+    "stochastic_variation": 0.0
+  },
+
+  "branching": {
+    "base_angle_degrees": 25.0,
+    "angle_variation": 5.0,
+    "branch_probability": 0.8,
+    "min_parent_age_years": 1
+  },
+
+  "output": {
+    "usd_path": "output/simple_test.usda",
+    "include_branches": true,
+    "include_foliage": false
+  }
+}
