@@ -94,8 +94,14 @@ if(BUILD_GUI)
     message(STATUS "Building GUI application")
 
     # Find GUI dependencies
-    find_package(OpenGL REQUIRED)
+    find_package(OpenGL QUIET)
     find_package(glfw3 QUIET)
+
+    if(NOT OpenGL_FOUND)
+        message(WARNING "OpenGL not found. GUI build disabled.")
+        message(STATUS "Note: OpenGL is required for GUI. On macOS it should be available by default.")
+        set(BUILD_GUI OFF)
+    endif()
 
     if(NOT glfw3_FOUND)
         message(WARNING "GLFW not found. Install with: brew install glfw")

@@ -208,11 +208,7 @@ void Viewer::render_ui() {
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-// Continued in next message due to length...
-
-}} // namespace plantgrow::gui
-// UI PANEL IMPLEMENTATIONS FOR viewer.cpp
-// Add these methods to the Viewer class
+// UI Panel Implementations
 
 void Viewer::ui_menu_bar() {
     if (ImGui::BeginMainMenuBar()) {
@@ -537,3 +533,5 @@ void Viewer::key_callback(GLFWwindow* window, int key, int scancode, int action,
     }
 }
 
+
+}} // namespace plantgrow::gui
