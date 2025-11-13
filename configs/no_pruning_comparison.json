@@ -1,0 +1,39 @@
+{
+  "species": "no_pruning_comparison",
+  "growth_parameters": {
+    "simulation_years": 50,
+    "random_seed": 12345
+  },
+  "l_system": {
+    "axiom": "F",
+    "iterations": 6,
+    "rules": {
+      "F": "F[+F]F[-F][F]"
+    },
+    "stochastic_variation": 0.1
+  },
+  "branching": {
+    "base_angle_degrees": 25.0,
+    "angle_variation": 5.0
+  },
+  "tropism": {
+    "phototropism_enabled": true,
+    "gravitropism_enabled": true,
+    "phototropism_strength": 0.8,
+    "gravitropism_strength": 0.6,
+    "response_distance": 5.0,
+    "apical_dominance": 0.65,
+    "curve_segments": 10
+  },
+  "environment": {
+    "light_x": 20.0,
+    "light_y": 100.0,
+    "light_z": 10.0,
+    "ambient_light": 0.2
+  },
+  "output": {
+    "usd_path": "output/no_pruning_comparison.usda",
+    "include_branches": true,
+    "include_foliage": false
+  }
+}

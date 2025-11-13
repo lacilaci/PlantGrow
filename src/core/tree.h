@@ -6,6 +6,9 @@
 
 namespace plantgrow {
 
+// Forward declaration
+class ResourceSystem;
+
 // Represents the entire tree structure
 class Tree {
 public:
@@ -45,6 +48,9 @@ public:
         }
         return branches;
     }
+
+    // Phase 3: Apply resource simulation and pruning
+    void apply_resource_simulation(ResourceSystem& resource_system);
 };
 
 } // namespace plantgrow

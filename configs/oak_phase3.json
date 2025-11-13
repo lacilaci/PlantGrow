@@ -1,0 +1,54 @@
+{
+  "species": "oak_phase3",
+  "growth_parameters": {
+    "simulation_years": 50,
+    "random_seed": 12345
+  },
+  "l_system": {
+    "axiom": "F",
+    "iterations": 6,
+    "rules": {
+      "F": "F[+F]F[-F][F]"
+    },
+    "stochastic_variation": 0.1
+  },
+  "branching": {
+    "base_angle_degrees": 25.0,
+    "angle_variation": 5.0
+  },
+  "tropism": {
+    "phototropism_enabled": true,
+    "gravitropism_enabled": true,
+    "phototropism_strength": 0.8,
+    "gravitropism_strength": 0.6,
+    "response_distance": 5.0,
+    "apical_dominance": 0.65,
+    "curve_segments": 10
+  },
+  "environment": {
+    "light_x": 20.0,
+    "light_y": 100.0,
+    "light_z": 10.0,
+    "ambient_light": 0.2
+  },
+  "resources": {
+    "light_competition_enabled": true,
+    "base_light_level": 1.0,
+    "occlusion_radius": 2.0,
+    "occlusion_falloff": 0.5,
+    "photosynthesis_efficiency": 1.0,
+    "resource_transport_rate": 0.8,
+    "maintenance_cost": 0.1,
+    "pruning_enabled": true,
+    "min_light_threshold": 0.15,
+    "min_resource_threshold": 0.2,
+    "pruning_grace_period": 2,
+    "competition_radius": 1.5,
+    "dominance_factor": 0.7
+  },
+  "output": {
+    "usd_path": "output/oak_phase3.usda",
+    "include_branches": true,
+    "include_foliage": false
+  }
+}

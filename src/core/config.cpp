@@ -177,6 +177,37 @@ bool ConfigParser::parse_string(const std::string& json_str, TreeConfig& config)
         config.environment.light_direction = config.environment.light_position.normalized();
     }
 
+    // Phase 3: Parse resources section
+    std::string resources = get_object(json_str, "resources");
+    if (!resources.empty()) {
+        config.resource_simulation_enabled = true;
+
+        // Light capture parameters
+        std::string light_comp_str = get_string(resources, "light_competition_enabled", "true");
+        config.resource_params.light_competition_enabled = (light_comp_str == "true");
+        config.resource_params.base_light_level = get_float(resources, "base_light_level", 1.0f);
+        config.resource_params.occlusion_radius = get_float(resources, "occlusion_radius", 2.0f);
+        config.resource_params.occlusion_falloff = get_float(resources, "occlusion_falloff", 0.5f);
+
+        // Resource allocation parameters
+        config.resource_params.photosynthesis_efficiency = get_float(resources, "photosynthesis_efficiency", 1.0f);
+        config.resource_params.resource_transport_rate = get_float(resources, "resource_transport_rate", 0.8f);
+        config.resource_params.maintenance_cost = get_float(resources, "maintenance_cost", 0.1f);
+
+        // Pruning parameters
+        std::string pruning_str = get_string(resources, "pruning_enabled", "true");
+        config.resource_params.pruning_enabled = (pruning_str == "true");
+        config.resource_params.min_light_threshold = get_float(resources, "min_light_threshold", 0.15f);
+        config.resource_params.min_resource_threshold = get_float(resources, "min_resource_threshold", 0.2f);
+        config.resource_params.pruning_grace_period = get_int(resources, "pruning_grace_period", 2);
+
+        // Competition parameters
+        config.resource_params.competition_radius = get_float(resources, "competition_radius", 1.5f);
+        config.resource_params.dominance_factor = get_float(resources, "dominance_factor", 0.7f);
+    } else {
+        config.resource_simulation_enabled = false;
+    }
+
     // Parse output section
     std::string output = get_object(json_str, "output");
     if (!output.empty()) {
@@ -200,6 +231,11 @@ bool ConfigParser::parse_string(const std::string& json_str, TreeConfig& config)
         std::cout << "    Curve segments: " << config.lsystem_params.curve_segments << std::endl;
         std::cout << "    Phototropism: " << config.tropism_params.phototropism_strength << std::endl;
         std::cout << "    Gravitropism: " << config.tropism_params.gravitropism_strength << std::endl;
+    }
+    std::cout << "  Resource simulation enabled: " << (config.resource_simulation_enabled ? "yes" : "no") << std::endl;
+    if (config.resource_simulation_enabled) {
+        std::cout << "    Pruning: " << (config.resource_params.pruning_enabled ? "enabled" : "disabled") << std::endl;
+        std::cout << "    Light competition: " << (config.resource_params.light_competition_enabled ? "enabled" : "disabled") << std::endl;
     }
     std::cout << "  Output path: " << config.output_path << std::endl;
 

@@ -6,6 +6,7 @@
 #include "../core/config.h"
 #include "../core/lsystem.h"
 #include "../core/tropism.h"
+#include "../core/resources.h"
 #include <memory>
 #include <string>
 
@@ -44,6 +45,7 @@ private:
     std::unique_ptr<Tree> tree_;
     std::unique_ptr<LSystem> lsystem_;
     std::shared_ptr<TropismSystem> tropism_;  // shared_ptr to match LSystem::set_tropism()
+    std::unique_ptr<ResourceSystem> resource_system_;  // Phase 3: Resource simulation
 
     // UI state
     bool show_ui_;
@@ -72,6 +74,7 @@ private:
     void ui_generation_panel();
     void ui_tropism_panel();
     void ui_environment_panel();
+    void ui_resources_panel();  // Phase 3
     void ui_visualization_panel();
     void ui_export_panel();
     void ui_status_bar();

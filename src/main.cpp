@@ -1,6 +1,7 @@
 #include "core/config.h"
 #include "core/lsystem.h"
 #include "core/tree.h"
+#include "core/resources.h"
 #include "export/usd_exporter.h"
 #include <iostream>
 #include <chrono>
@@ -86,6 +87,15 @@ int main(int argc, char** argv) {
     std::cout << "  Total branches: " << tree.all_branches.size() << "\n";
     std::cout << "  Generation time: " << duration.count() << " ms\n";
     std::cout << "\n";
+
+    // Phase 3: Apply resource simulation and pruning if enabled
+    if (config.resource_simulation_enabled) {
+        std::cout << "Running resource simulation...\n";
+        ResourceSystem resource_system(config.resource_params);
+        tree.apply_resource_simulation(resource_system);
+        std::cout << "  Final branch count: " << tree.all_branches.size() << "\n";
+        std::cout << "\n";
+    }
 
     // Export to USD
     std::cout << "Exporting tree to: " << config.output_path << "\n";

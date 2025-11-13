@@ -1,0 +1,54 @@
+{
+  "species": "aggressive_pruning_test",
+  "growth_parameters": {
+    "simulation_years": 50,
+    "random_seed": 99999
+  },
+  "l_system": {
+    "axiom": "F",
+    "iterations": 6,
+    "rules": {
+      "F": "F[+F]F[-F]F"
+    },
+    "stochastic_variation": 0.15
+  },
+  "branching": {
+    "base_angle_degrees": 35.0,
+    "angle_variation": 10.0
+  },
+  "tropism": {
+    "phototropism_enabled": true,
+    "gravitropism_enabled": true,
+    "phototropism_strength": 0.9,
+    "gravitropism_strength": 0.7,
+    "response_distance": 6.0,
+    "apical_dominance": 0.8,
+    "curve_segments": 10
+  },
+  "environment": {
+    "light_x": 10.0,
+    "light_y": 100.0,
+    "light_z": -5.0,
+    "ambient_light": 0.1
+  },
+  "resources": {
+    "light_competition_enabled": true,
+    "base_light_level": 0.8,
+    "occlusion_radius": 3.0,
+    "occlusion_falloff": 0.7,
+    "photosynthesis_efficiency": 1.2,
+    "resource_transport_rate": 0.7,
+    "maintenance_cost": 0.15,
+    "pruning_enabled": true,
+    "min_light_threshold": 0.3,
+    "min_resource_threshold": 0.35,
+    "pruning_grace_period": 1,
+    "competition_radius": 2.0,
+    "dominance_factor": 0.9
+  },
+  "output": {
+    "usd_path": "output/aggressive_pruning.usda",
+    "include_branches": true,
+    "include_foliage": false
+  }
+}

@@ -204,6 +204,7 @@ void Viewer::render_ui() {
         ui_generation_panel();
         ui_tropism_panel();
         ui_environment_panel();
+        ui_resources_panel();  // Phase 3
         ui_visualization_panel();
         ui_export_panel();
         ui_status_bar();
@@ -343,6 +344,81 @@ void Viewer::ui_environment_panel() {
     ImGui::End();
 }
 
+void Viewer::ui_resources_panel() {
+    ImGui::Begin("Resources & Pruning");
+
+    // Enable/disable resource simulation
+    if (ImGui::Checkbox("Resource Simulation", &config_.resource_simulation_enabled)) {
+        needs_regeneration_ = true;
+    }
+
+    if (config_.resource_simulation_enabled) {
+        ImGui::Spacing();
+        ImGui::Text("Light Competition");
+        ImGui::Separator();
+
+        if (ImGui::Checkbox("Enable Light Competition", &config_.resource_params.light_competition_enabled)) {
+            needs_regeneration_ = true;
+        }
+
+        if (ImGui::SliderFloat("Base Light Level", &config_.resource_params.base_light_level, 0.0f, 1.0f)) {
+            needs_regeneration_ = true;
+        }
+
+        if (ImGui::SliderFloat("Occlusion Radius", &config_.resource_params.occlusion_radius, 0.5f, 5.0f)) {
+            needs_regeneration_ = true;
+        }
+
+        ImGui::Spacing();
+        ImGui::Text("Resource Allocation");
+        ImGui::Separator();
+
+        if (ImGui::SliderFloat("Photosynthesis Efficiency", &config_.resource_params.photosynthesis_efficiency, 0.5f, 2.0f)) {
+            needs_regeneration_ = true;
+        }
+
+        if (ImGui::SliderFloat("Maintenance Cost", &config_.resource_params.maintenance_cost, 0.0f, 0.5f)) {
+            needs_regeneration_ = true;
+        }
+
+        ImGui::Spacing();
+        ImGui::Text("Pruning");
+        ImGui::Separator();
+
+        if (ImGui::Checkbox("Enable Pruning", &config_.resource_params.pruning_enabled)) {
+            needs_regeneration_ = true;
+        }
+
+        if (config_.resource_params.pruning_enabled) {
+            if (ImGui::SliderFloat("Min Light Threshold", &config_.resource_params.min_light_threshold, 0.0f, 0.5f)) {
+                needs_regeneration_ = true;
+            }
+
+            if (ImGui::SliderFloat("Min Resource Threshold", &config_.resource_params.min_resource_threshold, 0.0f, 0.5f)) {
+                needs_regeneration_ = true;
+            }
+
+            if (ImGui::SliderInt("Grace Period", &config_.resource_params.pruning_grace_period, 0, 5)) {
+                needs_regeneration_ = true;
+            }
+        }
+
+        ImGui::Spacing();
+        ImGui::Text("Branch Competition");
+        ImGui::Separator();
+
+        if (ImGui::SliderFloat("Competition Radius", &config_.resource_params.competition_radius, 0.5f, 3.0f)) {
+            needs_regeneration_ = true;
+        }
+
+        if (ImGui::SliderFloat("Dominance Factor", &config_.resource_params.dominance_factor, 0.0f, 1.0f)) {
+            needs_regeneration_ = true;
+        }
+    }
+
+    ImGui::End();
+}
+
 void Viewer::ui_visualization_panel() {
     ImGui::Begin("Visualization");
     
@@ -411,10 +487,10 @@ void Viewer::ui_status_bar() {
 
 void Viewer::regenerate_tree() {
     status_message_ = "Generating tree...";
-    
+
     // Create L-System
     lsystem_ = std::make_unique<LSystem>(config_.lsystem_params);
-    
+
     // Set up tropism if enabled
     if (config_.tropism_enabled) {
         tropism_ = std::make_shared<TropismSystem>(config_.tropism_params, config_.environment);
@@ -422,16 +498,22 @@ void Viewer::regenerate_tree() {
     } else {
         lsystem_->set_tropism(nullptr);
     }
-    
+
     // Generate L-string
     std::string lstring = lsystem_->generate();
-    
+
     // Interpret and create tree
     tree_ = std::make_unique<Tree>(lsystem_->interpret(lstring));
-    
+
+    // Phase 3: Apply resource simulation and pruning if enabled
+    if (config_.resource_simulation_enabled) {
+        resource_system_ = std::make_unique<ResourceSystem>(config_.resource_params);
+        tree_->apply_resource_simulation(*resource_system_);
+    }
+
     // Update renderer
     renderer_.update_tree(*tree_);
-    
+
     status_message_ = "Tree generated";
 }
 

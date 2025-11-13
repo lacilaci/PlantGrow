@@ -2,6 +2,7 @@
 
 #include "lsystem.h"
 #include "tropism.h"
+#include "resources.h"
 #include <string>
 #include <memory>
 
@@ -21,12 +22,16 @@ struct TreeConfig {
     Environment environment;
     bool tropism_enabled;
 
+    // Phase 3: Resource and pruning configuration
+    ResourceParams resource_params;
+    bool resource_simulation_enabled;
+
     // Output configuration
     std::string output_path;
     bool include_branches;
     bool include_foliage;
 
-    TreeConfig() : tropism_enabled(false) {}
+    TreeConfig() : tropism_enabled(false), resource_simulation_enabled(false) {}
 };
 
 // Configuration parser
