@@ -2,6 +2,10 @@
 
 A biologically-inspired procedural tree generator built in C++ with USD export support.
 
+**NEW: Interactive GUI Application!** 🎨
+Real-time 3D tree visualization with parameter controls. Perfect for experimentation and art direction.
+See [GUI_README.md](GUI_README.md) and [BUILD_GUI.md](BUILD_GUI.md) for details.
+
 ## Project Status
 
 **Current Phase: Phase 2 - Tropism System** ✓
@@ -51,7 +55,7 @@ cmake --build .
 cd ..
 ```
 
-### Running
+### Running (CLI)
 
 Generate a tree from a configuration file:
 
@@ -62,6 +66,33 @@ Generate a tree from a configuration file:
 # Or using the Python wrapper
 python3 python/tree_gen.py configs/oak.json
 ```
+
+### Running (GUI) - macOS Only
+
+For an interactive experience with real-time parameter controls:
+
+```bash
+# Install GUI dependencies (macOS)
+./setup_gui.sh
+
+# Build with GUI support
+mkdir -p build && cd build
+cmake .. -DBUILD_GUI=ON
+cmake --build . -j8
+
+# Run GUI application
+./plantgrow_gui
+```
+
+**GUI Features:**
+- 🎮 Real-time 3D tree visualization
+- 🎛️ Interactive parameter sliders
+- 📸 Orbit/pan/zoom camera controls
+- 🌈 Light exposure visualization
+- 💾 Config load/save
+- 📦 USD export
+
+See [BUILD_GUI.md](BUILD_GUI.md) for detailed GUI build instructions.
 
 ### Testing
 

@@ -14,6 +14,9 @@ option(USE_USD "Enable USD export support" ON)
 # Option to enable/disable OpenVDB (for later phases)
 option(USE_OPENVDB "Enable OpenVDB junction blending" OFF)
 
+# Option to build GUI application
+option(BUILD_GUI "Build GUI application" ON)
+
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/external/json/include)
@@ -85,3 +88,67 @@ endif()
 
 # Installation
 install(TARGETS plantgrow DESTINATION bin)
+
+# GUI Application
+if(BUILD_GUI)
+    message(STATUS "Building GUI application")
+
+    # Find GUI dependencies
+    find_package(OpenGL REQUIRED)
+    find_package(glfw3 QUIET)
+
+    if(NOT glfw3_FOUND)
+        message(WARNING "GLFW not found. Install with: brew install glfw")
+        message(WARNING "GUI build disabled")
+        set(BUILD_GUI OFF)
+    endif()
+
+    if(BUILD_GUI)
+        # ImGui sources (will be added to external/)
+        set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/external/imgui)
+        set(IMGUI_SOURCES
+            ${IMGUI_DIR}/imgui.cpp
+            ${IMGUI_DIR}/imgui_demo.cpp
+            ${IMGUI_DIR}/imgui_draw.cpp
+            ${IMGUI_DIR}/imgui_tables.cpp
+            ${IMGUI_DIR}/imgui_widgets.cpp
+            ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+            ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+        )
+
+        # GUI sources
+        set(GUI_SOURCES
+            src/gui/camera.cpp
+            src/gui/renderer.cpp
+            src/gui/viewer.cpp
+            src/gui/main_gui.cpp
+        )
+
+        # GUI executable
+        add_executable(plantgrow_gui
+            ${CORE_SOURCES}
+            ${EXPORT_SOURCES}
+            ${GUI_SOURCES}
+            ${IMGUI_SOURCES}
+        )
+
+        # Include ImGui
+        target_include_directories(plantgrow_gui PRIVATE ${IMGUI_DIR} ${IMGUI_DIR}/backends)
+
+        # Link GUI libraries
+        target_link_libraries(plantgrow_gui PRIVATE
+            OpenGL::GL
+            glfw
+        )
+
+        if(pxr_FOUND)
+            target_link_libraries(plantgrow_gui PRIVATE ${PXR_LIBRARIES})
+            target_include_directories(plantgrow_gui PRIVATE ${PXR_INCLUDE_DIRS})
+        endif()
+
+        # Installation
+        install(TARGETS plantgrow_gui DESTINATION bin)
+
+        message(STATUS "GUI application will be built as: plantgrow_gui")
+    endif()
+endif()
