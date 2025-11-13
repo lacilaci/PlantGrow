@@ -138,6 +138,44 @@ bool ConfigParser::parse_string(const std::string& json_str, TreeConfig& config)
     config.lsystem_params.segment_length = 1.0f;
     config.lsystem_params.segment_radius = 0.1f;
     config.lsystem_params.random_seed = config.random_seed;
+    config.lsystem_params.curve_segments = 0;  // Default: straight branches (Phase 1 behavior)
+
+    // Phase 2: Parse tropism section
+    std::string tropism = get_object(json_str, "tropism");
+    if (!tropism.empty()) {
+        config.tropism_enabled = true;
+        config.tropism_params.phototropism_strength = get_float(tropism, "phototropism_strength", 0.8f);
+        config.tropism_params.gravitropism_strength = get_float(tropism, "gravitropism_strength", 0.6f);
+        config.tropism_params.response_distance = get_float(tropism, "response_distance", 5.0f);
+        config.tropism_params.apical_dominance = get_float(tropism, "apical_dominance", 0.65f);
+
+        // Check if individual tropisms are enabled
+        std::string photo_enabled = get_string(tropism, "phototropism_enabled", "true");
+        std::string gravi_enabled = get_string(tropism, "gravitropism_enabled", "true");
+        config.tropism_params.phototropism_enabled = (photo_enabled == "true");
+        config.tropism_params.gravitropism_enabled = (gravi_enabled == "true");
+
+        // Set curve segments if tropism is enabled
+        config.lsystem_params.curve_segments = get_int(tropism, "curve_segments", 10);
+    } else {
+        config.tropism_enabled = false;
+        config.lsystem_params.curve_segments = 0;
+    }
+
+    // Parse environment section
+    std::string env = get_object(json_str, "environment");
+    if (!env.empty()) {
+        // Light position
+        config.environment.light_position.x = get_float(env, "light_x", 0.0f);
+        config.environment.light_position.y = get_float(env, "light_y", 100.0f);
+        config.environment.light_position.z = get_float(env, "light_z", 0.0f);
+
+        // Ambient light
+        config.environment.ambient_light = get_float(env, "ambient_light", 0.2f);
+
+        // Update light direction based on position
+        config.environment.light_direction = config.environment.light_position.normalized();
+    }
 
     // Parse output section
     std::string output = get_object(json_str, "output");
@@ -157,6 +195,12 @@ bool ConfigParser::parse_string(const std::string& json_str, TreeConfig& config)
     std::cout << "  L-System axiom: " << config.lsystem_params.axiom << std::endl;
     std::cout << "  L-System iterations: " << config.lsystem_params.iterations << std::endl;
     std::cout << "  Branch angle: " << config.lsystem_params.branch_angle << " degrees" << std::endl;
+    std::cout << "  Tropism enabled: " << (config.tropism_enabled ? "yes" : "no") << std::endl;
+    if (config.tropism_enabled) {
+        std::cout << "    Curve segments: " << config.lsystem_params.curve_segments << std::endl;
+        std::cout << "    Phototropism: " << config.tropism_params.phototropism_strength << std::endl;
+        std::cout << "    Gravitropism: " << config.tropism_params.gravitropism_strength << std::endl;
+    }
     std::cout << "  Output path: " << config.output_path << std::endl;
 
     return true;

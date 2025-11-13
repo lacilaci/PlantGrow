@@ -7,6 +7,7 @@ namespace plantgrow {
 LSystem::LSystem(const LSystemParams& params)
     : params_(params)
     , rng_(params.random_seed)
+    , tropism_(nullptr)
 {}
 
 std::string LSystem::generate() {
@@ -94,6 +95,10 @@ void LSystem::process_symbol(char symbol, TurtleState& state,
 
             tree.add_branch(new_branch);
             current_branch = new_branch;
+
+            // Phase 2: Apply tropism if enabled
+            apply_tropism_to_branch(new_branch);
+
             state.position = new_branch->end_pos();
             break;
         }
@@ -196,6 +201,44 @@ float LSystem::random_float(float min, float max) {
 bool LSystem::random_chance(float probability) {
     std::uniform_real_distribution<float> dist(0.0f, 1.0f);
     return dist(rng_) < probability;
+}
+
+void LSystem::apply_tropism_to_branch(std::shared_ptr<Branch> branch) {
+    // Only apply tropism if system is configured and curve_segments > 0
+    if (!tropism_ || params_.curve_segments <= 0) {
+        return;
+    }
+
+    // Generate curved path with tropism
+    int num_segments = params_.curve_segments;
+    float segment_length = branch->length / num_segments;
+
+    branch->curve_points.clear();
+    branch->curve_points.push_back(branch->start_pos);
+
+    Vec3 current_pos = branch->start_pos;
+    Vec3 current_dir = branch->direction;
+
+    for (int i = 1; i <= num_segments; ++i) {
+        // Apply tropism to current direction
+        current_dir = tropism_->apply_tropism(
+            current_dir,
+            current_pos,
+            branch->depth,
+            branch->age
+        );
+
+        // Move forward with modified direction
+        current_pos = current_pos + (current_dir * segment_length);
+        branch->curve_points.push_back(current_pos);
+    }
+
+    // Update final direction to match the curved end direction
+    branch->direction = current_dir;
+
+    // Calculate light exposure for this branch
+    Vec3 mid_pos = branch->start_pos + (branch->direction * (branch->length * 0.5f));
+    branch->light_exposure = tropism_->compute_light_exposure(mid_pos, branch->direction);
 }
 
 } // namespace plantgrow

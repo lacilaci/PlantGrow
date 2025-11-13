@@ -1,6 +1,7 @@
 #pragma once
 
 #include "lsystem.h"
+#include "tropism.h"
 #include <string>
 #include <memory>
 
@@ -15,10 +16,17 @@ struct TreeConfig {
     // L-System configuration
     LSystemParams lsystem_params;
 
+    // Phase 2: Tropism configuration
+    TropismParams tropism_params;
+    Environment environment;
+    bool tropism_enabled;
+
     // Output configuration
     std::string output_path;
     bool include_branches;
     bool include_foliage;
+
+    TreeConfig() : tropism_enabled(false) {}
 };
 
 // Configuration parser

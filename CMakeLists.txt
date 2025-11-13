@@ -48,6 +48,7 @@ set(CORE_SOURCES
     src/core/tree.cpp
     src/core/branch.cpp
     src/core/config.cpp
+    src/core/tropism.cpp
 )
 
 set(EXPORT_SOURCES

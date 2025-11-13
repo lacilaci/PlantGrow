@@ -4,17 +4,22 @@ A biologically-inspired procedural tree generator built in C++ with USD export s
 
 ## Project Status
 
-**Current Phase: Phase 1 - Foundation & Basic Growth** ✓
+**Current Phase: Phase 2 - Tropism System** ✓
 
 ### Completed Features
 - ✓ L-System based growth simulation
 - ✓ JSON configuration system
-- ✓ Basic branch skeleton generation
-- ✓ USD export (line-based visualization)
+- ✓ Branch skeleton generation with curved paths
+- ✓ USD export (curve-based visualization)
 - ✓ Python execution wrapper
+- ✓ **Phototropism** (branches bend toward light)
+- ✓ **Gravitropism** (branches respond to gravity)
+- ✓ **Light exposure visualization** (color-coded branches)
+- ✓ **Environmental response system**
 
 ### Roadmap
-- [ ] Phase 2: Tropism System (phototropism, gravitropism)
+- [✓] Phase 1: Foundation & Basic Growth
+- [✓] Phase 2: Tropism System (phototropism, gravitropism)
 - [ ] Phase 3: Resource System & Pruning
 - [ ] Phase 4: Growth Strategy Implementation
 - [ ] Phase 5: Basic Meshing (Cylinders)
@@ -60,10 +65,14 @@ python3 python/tree_gen.py configs/oak.json
 
 ### Testing
 
-Run the Phase 1 test suite:
+Run the test suites:
 
 ```bash
+# Phase 1: Foundation & Basic Growth
 python3 python/tests/test_phase1.py
+
+# Phase 2: Tropism System
+python3 python/tests/test_phase2.py
 ```
 
 ## Configuration
@@ -96,6 +105,46 @@ Trees are defined using JSON configuration files. See `configs/oak.json` for a c
   }
 }
 ```
+
+### Phase 2: Tropism Configuration
+
+Enable realistic branch bending with phototropism and gravitropism:
+
+```json
+{
+  "species": "oak_with_tropism",
+  "tropism": {
+    "phototropism_enabled": true,
+    "gravitropism_enabled": true,
+    "phototropism_strength": 0.8,
+    "gravitropism_strength": 0.6,
+    "response_distance": 5.0,
+    "apical_dominance": 0.65,
+    "curve_segments": 10
+  },
+  "environment": {
+    "light_x": 20.0,
+    "light_y": 100.0,
+    "light_z": 10.0,
+    "ambient_light": 0.2
+  }
+}
+```
+
+**Tropism Parameters:**
+- `phototropism_strength` (0-1): How strongly branches bend toward light
+- `gravitropism_strength` (0-1): How strongly branches respond to gravity
+- `apical_dominance` (0-1): Main stem resistance to bending
+- `curve_segments`: Number of subdivisions per branch (higher = smoother curves)
+
+**Environment Parameters:**
+- `light_x/y/z`: Position of primary light source
+- `ambient_light` (0-1): Base light level for shaded areas
+
+**Visualization:**
+- Branches are color-coded by light exposure
+- Red = high light exposure
+- Blue = low light exposure (shaded)
 
 ### L-System Symbols
 
@@ -158,14 +207,29 @@ PlantGrow/
 - [x] Python execution wrapper
 - [x] Line-based USD export
 
+### Phase 2 Goals
+- [x] Tropism system architecture
+- [x] Phototropism implementation
+- [x] Gravitropism implementation
+- [x] Curved branch path generation
+- [x] Light exposure calculation
+- [x] Environmental response system
+- [x] Light-based branch coloring
+- [x] Phase 2 test suite
+
 ### Checkpoint Validation
 
-To verify Phase 1 is complete:
-
+**Phase 1:**
 1. Run the test suite: `python3 python/tests/test_phase1.py`
 2. Open `output/oak_tree.usda` in a USD viewer
 3. Verify the structure looks tree-like with branching
-4. Modify `configs/oak.json` and verify changes are reflected
+
+**Phase 2:**
+1. Run the test suite: `python3 python/tests/test_phase2.py`
+2. Open `output/oak_phase2.usda` in a USD viewer
+3. Verify branches curve toward light source
+4. Check color gradient (red=light, blue=shade)
+5. Compare phototropism-only vs full tropism trees
 
 ## Architecture
 
@@ -203,4 +267,4 @@ Inspired by:
 
 ---
 
-**Status:** Phase 1 Complete | Ready for Phase 2 Development
+**Status:** Phase 2 Complete | Ready for Phase 3 Development

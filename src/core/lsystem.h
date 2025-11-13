@@ -1,10 +1,12 @@
 #pragma once
 
 #include "tree.h"
+#include "tropism.h"
 #include <string>
 #include <map>
 #include <random>
 #include <stack>
+#include <memory>
 
 namespace plantgrow {
 
@@ -23,6 +25,9 @@ struct LSystemParams {
     // Randomization
     unsigned int random_seed;
     float stochastic_variation;  // 0-1, probability of applying variation
+
+    // Phase 2: Tropism support
+    int curve_segments;  // Number of segments per branch for curvature (0 = straight)
 };
 
 // L-System state during interpretation
@@ -47,6 +52,11 @@ class LSystem {
 public:
     LSystem(const LSystemParams& params);
 
+    // Set tropism system (optional, for Phase 2+)
+    void set_tropism(std::shared_ptr<TropismSystem> tropism) {
+        tropism_ = tropism;
+    }
+
     // Generate L-System string
     std::string generate();
 
@@ -56,6 +66,7 @@ public:
 private:
     LSystemParams params_;
     std::mt19937 rng_;
+    std::shared_ptr<TropismSystem> tropism_;  // Optional tropism system
 
     // Apply production rules for one iteration
     std::string apply_rules(const std::string& input);
@@ -68,6 +79,9 @@ private:
 
     // Rotate turtle direction
     void rotate_turtle(TurtleState& state, float angle_degrees, const Vec3& axis);
+
+    // Phase 2: Apply tropism to a branch and generate curved path
+    void apply_tropism_to_branch(std::shared_ptr<Branch> branch);
 
     // Random number helpers
     float random_float(float min, float max);

@@ -49,6 +49,18 @@ int main(int argc, char** argv) {
 
     std::cout << "Generating L-System string...\n";
     LSystem lsystem(config.lsystem_params);
+
+    // Phase 2: Set up tropism system if enabled
+    if (config.tropism_enabled) {
+        std::cout << "Setting up tropism system...\n";
+        auto tropism = std::make_shared<TropismSystem>(config.tropism_params, config.environment);
+        lsystem.set_tropism(tropism);
+        std::cout << "  Light position: ("
+                  << config.environment.light_position.x << ", "
+                  << config.environment.light_position.y << ", "
+                  << config.environment.light_position.z << ")\n";
+    }
+
     std::string lstring = lsystem.generate();
 
     std::cout << "L-System string generated (" << lstring.length() << " symbols)\n";
@@ -60,7 +72,11 @@ int main(int argc, char** argv) {
     std::cout << "\n";
 
     // Interpret L-System and create tree geometry
-    std::cout << "Interpreting L-System and generating tree geometry...\n";
+    std::cout << "Interpreting L-System and generating tree geometry";
+    if (config.tropism_enabled) {
+        std::cout << " with tropism";
+    }
+    std::cout << "...\n";
     Tree tree = lsystem.interpret(lstring);
 
     auto end_time = std::chrono::high_resolution_clock::now();

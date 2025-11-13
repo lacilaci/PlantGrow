@@ -57,33 +57,62 @@ bool USDExporter::export_usda_lines(const Tree& tree, const std::string& filepat
     // Collect all branches
     std::vector<Branch*> branches = const_cast<Tree&>(tree).get_all_branches();
 
-    // Write each branch as a BasisCurves (line)
+    // Write each branch as a BasisCurves (line or curve)
     for (size_t i = 0; i < branches.size(); ++i) {
         Branch* branch = branches[i];
+
+        // Get path points (either straight or curved)
+        std::vector<Vec3> path_points = branch->get_path_points();
 
         file << "    def BasisCurves \"Branch_" << i << "\"\n";
         file << "    {\n";
         file << "        uniform token type = \"linear\"\n";
         file << "        uniform token basis = \"bezier\"\n";
-        file << "        int[] curveVertexCounts = [2]\n";
+        file << "        int[] curveVertexCounts = [" << path_points.size() << "]\n";
 
-        // Write points (start and end of branch)
-        Vec3 start = branch->start_pos;
-        Vec3 end = branch->end_pos();
-
+        // Write all points along the path
         file << "        point3f[] points = [";
-        file << "(" << start.x << ", " << start.y << ", " << start.z << "), ";
-        file << "(" << end.x << ", " << end.y << ", " << end.z << ")";
+        for (size_t j = 0; j < path_points.size(); ++j) {
+            const Vec3& pt = path_points[j];
+            file << "(" << pt.x << ", " << pt.y << ", " << pt.z << ")";
+            if (j < path_points.size() - 1) {
+                file << ", ";
+            }
+        }
         file << "]\n";
 
-        // Write widths (for visualization)
-        file << "        float[] widths = [" << branch->radius << ", " << branch->radius * 0.8f << "]\n";
+        // Write widths (taper from base to tip)
+        file << "        float[] widths = [";
+        for (size_t j = 0; j < path_points.size(); ++j) {
+            float t = static_cast<float>(j) / (path_points.size() - 1);
+            float width = branch->radius * (1.0f - t * 0.2f);  // Slight taper
+            file << width;
+            if (j < path_points.size() - 1) {
+                file << ", ";
+            }
+        }
+        file << "]\n";
 
-        // Write color based on depth (for debugging)
-        float depth_color = 1.0f - (branch->depth * 0.1f);
-        if (depth_color < 0.2f) depth_color = 0.2f;
+        // Phase 2: Color based on light exposure (red=high, blue=low)
+        // If light_exposure is available, use it; otherwise use depth
+        float r, g, b;
+        if (branch->light_exposure > 0) {
+            // Light exposure coloring: red = high light, blue = low light
+            float exposure = branch->light_exposure;
+            r = exposure;              // High exposure = more red
+            g = exposure * 0.8f;       // Medium green
+            b = 1.0f - exposure;       // Low exposure = more blue
+        } else {
+            // Fallback: depth-based coloring (Phase 1 behavior)
+            float depth_color = 1.0f - (branch->depth * 0.1f);
+            if (depth_color < 0.2f) depth_color = 0.2f;
+            r = depth_color;
+            g = depth_color * 0.8f;
+            b = depth_color * 0.6f;
+        }
+
         file << "        color3f[] primvars:displayColor = [("
-             << depth_color << ", " << depth_color * 0.8f << ", " << depth_color * 0.6f << ")]\n";
+             << r << ", " << g << ", " << b << ")]\n";
 
         file << "    }\n\n";
     }

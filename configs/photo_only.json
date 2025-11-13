@@ -1,0 +1,48 @@
+{
+  "species": "phototropism_test",
+  "version": "1.0",
+  "metadata": {
+    "description": "Test phototropism only - light from the side",
+    "author": "PlantGrow",
+    "date": "2025-11-13"
+  },
+
+  "growth_parameters": {
+    "simulation_years": 20,
+    "random_seed": 42
+  },
+
+  "l_system": {
+    "axiom": "F",
+    "rules": {
+      "F": "F[+F][-F]"
+    },
+    "iterations": 4,
+    "stochastic_variation": 0.0
+  },
+
+  "branching": {
+    "base_angle_degrees": 25.0,
+    "angle_variation": 5.0
+  },
+
+  "tropism": {
+    "phototropism_enabled": true,
+    "gravitropism_enabled": false,
+    "phototropism_strength": 0.9,
+    "curve_segments": 12
+  },
+
+  "environment": {
+    "light_x": 50.0,
+    "light_y": 80.0,
+    "light_z": 0.0,
+    "ambient_light": 0.1
+  },
+
+  "output": {
+    "usd_path": "output/photo_only.usda",
+    "include_branches": true,
+    "include_foliage": false
+  }
+}

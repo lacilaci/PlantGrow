@@ -1,0 +1,54 @@
+{
+  "species": "oak_phase2",
+  "version": "1.0",
+  "metadata": {
+    "description": "Oak tree with tropism - Phase 2 Test",
+    "author": "PlantGrow",
+    "date": "2025-11-13"
+  },
+
+  "growth_parameters": {
+    "simulation_years": 30,
+    "time_step_years": 1,
+    "random_seed": 12345
+  },
+
+  "l_system": {
+    "axiom": "F",
+    "rules": {
+      "F": "F[+F][-F]F"
+    },
+    "iterations": 5,
+    "stochastic_variation": 0.0
+  },
+
+  "branching": {
+    "base_angle_degrees": 30.0,
+    "angle_variation": 10.0,
+    "branch_probability": 0.7,
+    "min_parent_age_years": 2
+  },
+
+  "tropism": {
+    "phototropism_enabled": true,
+    "gravitropism_enabled": true,
+    "phototropism_strength": 0.8,
+    "gravitropism_strength": 0.6,
+    "response_distance": 5.0,
+    "apical_dominance": 0.65,
+    "curve_segments": 10
+  },
+
+  "environment": {
+    "light_x": 20.0,
+    "light_y": 100.0,
+    "light_z": 10.0,
+    "ambient_light": 0.2
+  },
+
+  "output": {
+    "usd_path": "output/oak_phase2.usda",
+    "include_branches": true,
+    "include_foliage": false
+  }
+}
