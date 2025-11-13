@@ -43,7 +43,7 @@ private:
     TreeConfig config_;
     std::unique_ptr<Tree> tree_;
     std::unique_ptr<LSystem> lsystem_;
-    std::unique_ptr<TropismSystem> tropism_;
+    std::shared_ptr<TropismSystem> tropism_;  // shared_ptr to match LSystem::set_tropism()
 
     // UI state
     bool show_ui_;

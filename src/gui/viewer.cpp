@@ -1,6 +1,11 @@
 #include "viewer.h"
 #include "../export/usd_exporter.h"
 
+// Silence OpenGL deprecation warnings on macOS
+#ifdef __APPLE__
+#define GL_SILENCE_DEPRECATION
+#endif
+
 #include <GLFW/glfw3.h>
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
